@@ -123,6 +123,18 @@ producao_total = pd.concat([producao2007, producao2008, producao2009, producao20
                             producao2014, producao2015, producao2016, producao2017, producao2018, producao2019, producao2020, producao2021], axis=1)
 producao_total.head()
 
+colunas_sel = ["Produto", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021"]
+producao_total = producao_total.loc[:, colunas_sel]
+producao_total.head()
+
+producao_total = producao_total.iloc[:, 14:]
+producao_total.head()
+
+producao_total = producao_total.set_index(producao_total.columns[0])
+
+index_column = producao_total.index.name
+print(index_column)
+
 producao_total.to_excel('producao_total.xlsx', index=False)
 
 """# 1.2 exportação de Vinho de 2007 até 2021"""
@@ -234,6 +246,56 @@ exportacao2021.head()
 
 exportacao_total = pd.concat([exportacao2007, exportacao2008, exportacao2009, exportacao2010, exportacao2011, exportacao2012, exportacao2013,
                             exportacao2014, exportacao2015, exportacao2016, exportacao2017, exportacao2018, exportacao2019, exportacao2020, exportacao2021], axis=1)
+exportacao_total.head()
+
+colunas_selecionadas = ["PaÃ­ses", "2007 (Ltr)",	"2007 Valor (USD)",	"2008 (Ltr)",	"2008 Valor (USD)",	"2009 (Ltr)",	"2009 Valor (USD)",	"2010 (Ltr)",	"2010 Valor (USD)",	"2011 (Ltr)",
+                        "2011 Valor (USD)",	"2012 (Ltr)",	"2012 Valor (USD)",	"2013 (Ltr)",	"2013 Valor (USD)",	"2014 (Ltr)",	"2014 Valor (USD)",	"2015 (Ltr)",	"2015 Valor (USD)",
+                        "2016 (Ltr)",	"2016 Valor (USD)",	"2017 (Ltr)",	"2017 Valor (USD)",	"2018 (Ltr)",	"2018 Valor (USD)",	"2019 (Ltr)",	"2019 Valor (USD)",	"2020 (Ltr)",
+                        "2020 Valor (USD)",	"2021 (Ltr)",	"2021 Valor (USD)"]
+
+exportacao_total = exportacao_total.loc[:, colunas_selecionadas]
+exportacao_total.head()
+
+exportacao_total = exportacao_total.iloc[:, 14:]
+exportacao_total.head()
+
+exportacao_total = exportacao_total.replace("-", 0)
+exportacao_total.head()
+
+exportacao_total = exportacao_total.set_index(exportacao_total.columns[0])
+
+index_column = exportacao_total.index.name
+print(index_column)
+
+import numpy as np
+
+def safe_division(x, y):
+    if y != 0:
+        return x / y
+    else:
+        return 0
+
+for year in range(2007, 2021):
+    index = ["Paises"]
+    valor1_col = f"{year} (Ltr)"
+    valor2_col = f"{year} Valor (USD)"
+    media_ = f'media_{year}'
+    exportacao_total.loc[:, valor1_col] = pd.to_numeric(exportacao_total[valor1_col], errors='coerce')
+    exportacao_total.loc[:, valor2_col] = pd.to_numeric(exportacao_total[valor2_col], errors='coerce')
+    exportacao_total.loc[:, media_] = exportacao_total.apply(lambda row: safe_division(row[valor2_col], row[valor1_col]), axis=1)
+
+# Reorganizando as colunas na ordem desejada
+columns_ordered = []
+for year in range(2007, 2021):
+    valor1_col = f"{year} (Ltr)"
+    valor2_col = f"{year} Valor (USD)"
+    media_ = f'media_{year}'
+    columns_ordered.extend([valor1_col, valor2_col, media_])
+
+exportacao_total = exportacao_total[columns_ordered]
+exportacao_total.fillna(0, inplace=True)
+
+
 exportacao_total.head()
 
 exportacao_total.to_excel('exportacao_total.xlsx', index=False)
@@ -349,6 +411,54 @@ exportacao_esp_total = pd.concat([exportacao_esp_2007, exportacao_esp_2008, expo
                             exportacao_esp_2014, exportacao_esp_2015, exportacao_esp_2016, exportacao_esp_2017, exportacao_esp_2018, exportacao_esp_2019, exportacao_esp_2020, exportacao_esp_2021], axis=1)
 exportacao_esp_total.head()
 
+colunas_sele = ["PaÃ­ses", "2007 (Ltr)",	"2007 Valor (USD)",	"2008 (Ltr)",	"2008 Valor (USD)",	"2009 (Ltr)",	"2009 Valor (USD)",	"2010 (Ltr)",	"2010 Valor (USD)",	"2011 (Ltr)",
+                        "2011 Valor (USD)",	"2012 (Ltr)",	"2012 Valor (USD)",	"2013 (Ltr)",	"2013 Valor (USD)",	"2014 (Ltr)",	"2014 Valor (USD)",	"2015 (Ltr)",	"2015 Valor (USD)",
+                        "2016 (Ltr)",	"2016 Valor (USD)",	"2017 (Ltr)",	"2017 Valor (USD)",	"2018 (Ltr)",	"2018 Valor (USD)",	"2019 (Ltr)",	"2019 Valor (USD)",	"2020 (Ltr)",
+                        "2020 Valor (USD)",	"2021 (Ltr)",	"2021 Valor (USD)"]
+
+exportacao_esp_total = exportacao_esp_total.loc[:, colunas_sele]
+exportacao_esp_total.head()
+
+exportacao_esp_total = exportacao_esp_total.iloc[:, 14:]
+exportacao_esp_total.head()
+
+exportacao_esp_total = exportacao_esp_total.replace("-", 0)
+exportacao_esp_total.head()
+
+exportacao_esp_total = exportacao_esp_total.set_index(exportacao_esp_total.columns[0])
+
+index_column = exportacao_esp_total.index.name
+print(index_column)
+
+def safe_division(x, y):
+    if y != 0:
+        return x / y
+    else:
+        return 0
+
+for year in range(2007, 2021):
+    index = ["Paises"]
+    valor1_col = f"{year} (Ltr)"
+    valor2_col = f"{year} Valor (USD)"
+    media_ = f'media_{year}'
+    exportacao_esp_total.loc[:, valor1_col] = pd.to_numeric(exportacao_esp_total[valor1_col], errors='coerce')
+    exportacao_esp_total.loc[:, valor2_col] = pd.to_numeric(exportacao_esp_total[valor2_col], errors='coerce')
+    exportacao_esp_total.loc[:, media_] = exportacao_esp_total.apply(lambda row: safe_division(row[valor2_col], row[valor1_col]), axis=1)
+
+# Reorganizando as colunas na ordem desejada
+columns_ordered = []
+for year in range(2007, 2021):
+    valor1_col = f"{year} (Ltr)"
+    valor2_col = f"{year} Valor (USD)"
+    media_ = f'media_{year}'
+    columns_ordered.extend([valor1_col, valor2_col, media_])
+
+exportacao_esp_total = exportacao_esp_total[columns_ordered]
+exportacao_esp_total.fillna(0, inplace=True)
+
+
+exportacao_esp_total.head()
+
 exportacao_esp_total.to_excel('exportacao_esp_total.xlsx', index=False)
 
 """# 1.4 Processamento de Uvas Tipo Viníferas de 2007 até 2021"""
@@ -461,6 +571,22 @@ proces_vinifera_2021.head()
 proces_vinifera_total = pd.concat([proces_vinifera_2007, proces_vinifera_2008, proces_vinifera_2009, proces_vinifera_2010, proces_vinifera_2011, proces_vinifera_2012, proces_vinifera_2013,
                             proces_vinifera_2014, proces_vinifera_2015, proces_vinifera_2016, proces_vinifera_2017, proces_vinifera_2018, proces_vinifera_2019, proces_vinifera_2020, proces_vinifera_2021], axis=1)
 proces_vinifera_total.head()
+
+colunas_selec = ["Cultivar",	"2007 (Ltr)",	"2008 (Ltr)", "2009 (Ltr)",	"2010 (Ltr)", "2011 (Ltr)", "2012 (Ltr)", "2013 (Ltr)", "2014 (Ltr)", "2015 (Ltr)", "2016 (Ltr)", "2017 (Ltr)",
+                        "2018 (Ltr)", "2019 (Ltr)", "2020 (Ltr)", "2021 (Ltr)"]
+proces_vinifera_total = proces_vinifera_total.loc[:, colunas_selec]
+proces_vinifera_total.head()
+
+proces_vinifera_total = proces_vinifera_total.iloc[:, 14:]
+proces_vinifera_total.head()
+
+proces_vinifera_total = proces_vinifera_total.replace("-", 0)
+proces_vinifera_total.head()
+
+proces_vinifera_total = proces_vinifera_total.set_index(proces_vinifera_total.columns[0])
+
+index_column = proces_vinifera_total.index.name
+print(index_column)
 
 proces_vinifera_total.to_excel('proces_vinifera_total.xlsx', index=False)
 
@@ -575,41 +701,27 @@ proces_ame_e_hib_total = pd.concat([proces_ame_e_hib_2007, proces_ame_e_hib_2008
                             proces_ame_e_hib_2014, proces_ame_e_hib_2015, proces_ame_e_hib_2016, proces_ame_e_hib_2017, proces_ame_e_hib_2018, proces_ame_e_hib_2019, proces_ame_e_hib_2020, proces_ame_e_hib_2021], axis=1)
 proces_ame_e_hib_total.head()
 
+colunas_seleci = ["Cultivar",	"2007 (Ltr)",	"2008 (Ltr)", "2009 (Ltr)",	"2010 (Ltr)", "2011 (Ltr)", "2012 (Ltr)", "2013 (Ltr)", "2014 (Ltr)", "2015 (Ltr)", "2016 (Ltr)", "2017 (Ltr)",
+                        "2018 (Ltr)", "2019 (Ltr)", "2020 (Ltr)", "2021 (Ltr)"]
+proces_ame_e_hib_total = proces_ame_e_hib_total.loc[:, colunas_seleci]
+proces_ame_e_hib_total.head()
+
+proces_ame_e_hib_total = proces_ame_e_hib_total.iloc[:, 14:]
+proces_ame_e_hib_total.head()
+
+proces_ame_e_hib_total = proces_ame_e_hib_total.replace("-", 0)
+proces_ame_e_hib_total.head()
+
+proces_ame_e_hib_total = proces_ame_e_hib_total.set_index(proces_ame_e_hib_total.columns[0])
+
+index_column = proces_ame_e_hib_total.index.name
+print(index_column)
+
 proces_ame_e_hib_total.to_excel('proces_ame_e_hib_total.xlsx', index=False)
 
-"""#1.6 Criação de coluna com preço médio por Litro"""
+"""#1.6 Medias de chuva no Rio Grande Do Sul"""
 
-exportacao_total_vinho = pd.read_excel("/content/exportacao_total.xlsx")
-exportacao_total_vinho.head()
-
-exportacao_total_vinho = exportacao_total_vinho.replace("-", 0)
-exportacao_total_vinho.head()
-
-import numpy as np
-
-def safe_division(x, y):
-    if y != 0:
-        return x / y
-    else:
-        return 0
-
-for year in range(2007, 2021):
-    valor1_col = f"{year} (Ltr)"
-    valor2_col = f"{year} Valor (USD)"
-    media_ = f'media_{year}'
-    exportacao_total_vinho.loc[:, valor1_col] = pd.to_numeric(exportacao_total_vinho[valor1_col], errors='coerce')
-    exportacao_total_vinho.loc[:, valor2_col] = pd.to_numeric(exportacao_total_vinho[valor2_col], errors='coerce')
-    exportacao_total_vinho.loc[:, media_] = exportacao_total_vinho.apply(lambda row: safe_division(row[valor2_col], row[valor1_col]), axis=1)
-
-# Reorganizando as colunas na ordem desejada
-columns_ordered = []
-for year in range(2007, 2021):
-    valor1_col = f"{year} (Ltr)"
-    valor2_col = f"{year} Valor (USD)"
-    media_ = f'media_{year}'
-    columns_ordered.extend([valor1_col, valor2_col, media_])
-
-exportacao_total_vinho = exportacao_total_vinho[columns_ordered]
-exportacao_total_vinho.fillna(0, inplace=True)
-
-exportacao_total_vinho.head()
+import pandas as pd
+leitur = pd.read_html('https://pt.wikipedia.org/wiki/Predefini%C3%A7%C3%A3o:Tabela_clim%C3%A1tica_de_Porto_Alegre')
+media_de_chuvas_rs = leitur[0]
+media_de_chuvas_rs.head()
