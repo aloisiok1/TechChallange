@@ -725,3 +725,83 @@ import pandas as pd
 leitur = pd.read_html('https://pt.wikipedia.org/wiki/Predefini%C3%A7%C3%A3o:Tabela_clim%C3%A1tica_de_Porto_Alegre')
 media_de_chuvas_rs = leitur[0]
 media_de_chuvas_rs.head()
+
+media_de_chuvas_rs = media_de_chuvas_rs.drop([0, 4, 6, 7, 8, 9])
+
+media_de_chuvas_rs.columns
+
+media_de_chuvas_rs.columns = media_de_chuvas_rs.columns.droplevel(0)
+
+media_de_chuvas_rs.columns
+
+media_de_chuvas_rs = media_de_chuvas_rs.drop("Ano", axis=1)
+media_de_chuvas_rs
+
+colunas_a_formatar = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez', 'Ano']
+
+def format_decimal(value):
+    # Remove special characters and convert to float
+    value = float(value.replace(',', '').replace('\xa0', ''))
+    return '{:,.2f}'.format(value / 10).replace(',', '.')
+
+for coluna in media_de_chuvas_rs.columns:
+    for coluna_formatar in colunas_a_formatar:
+        if coluna_formatar in coluna:
+            media_de_chuvas_rs[coluna] = media_de_chuvas_rs[coluna].apply(format_decimal)
+            break
+
+print(media_de_chuvas_rs)
+
+media_de_chuvas_rs
+
+media_de_chuvas_rs.loc[1, 'Jan'] = float(media_de_chuvas_rs.loc[1, 'Jan']) * 10
+media_de_chuvas_rs.loc[2, 'Jan'] = float(media_de_chuvas_rs.loc[2, 'Jan']) * 10
+media_de_chuvas_rs.loc[1, 'Dez'] = float(media_de_chuvas_rs.loc[1, 'Dez']) * 10
+media_de_chuvas_rs.loc[2, 'Dez'] = float(media_de_chuvas_rs.loc[2, 'Dez']) * 10
+
+media_de_chuvas_rs
+
+chuva_2016 = pd.read_html('https://www.embrapa.br/uva-e-vinho/dados-meteorologicos/bento-goncalves/-/asset_publisher/mVb5LKtZvu3R/content/2016-agrometeorologia-bento-goncalves-resumo-anual/1355300?inheritRedirect=false&redirect=https%3A%2F%2Fwww.embrapa.br%2Fuva-e-vinho%2Fdados-meteorologicos%2Fbento-goncalves%3Fp_p_id%3D101_INSTANCE_mVb5LKtZvu3R%26p_p_lifecycle%3D0%26p_p_state%3Dnormal%26p_p_mode%3Dview%26p_p_col_id%3Dcolumn-2%26p_p_col_pos%3D5%26p_p_col_count%3D7')
+media_de_chuvas_rs_2016 = chuva_2016[0]
+media_de_chuvas_rs_2016.head()
+
+media_de_chuvas_rs_2016 = media_de_chuvas_rs_2016.T
+media_de_chuvas_rs_2016.head()
+
+media_de_chuvas_rs_2016 = media_de_chuvas_rs_2016.reset_index()  # Remove o índice existente
+media_de_chuvas_rs_2016.columns = media_de_chuvas_rs_2016.iloc[0]  # Define a primeira linha como os nomes das colunas
+media_de_chuvas_rs_2016 = media_de_chuvas_rs_2016[1:]  # Remove a primeira linha que se tornou o nome das colunas
+media_de_chuvas_rs_2016 = media_de_chuvas_rs_2016.set_index('Bento GonÃ§alves - 2016')  # Define a coluna desejada como o novo índice
+
+media_de_chuvas_rs_2016.head()
+
+media_de_chuvas_rs_2016.columns
+
+media_de_chuvas_rs_2016.columns.values[1] = 'Indice'
+
+media_de_chuvas_rs_2016.columns
+
+media_de_chuvas_rs_2016 = media_de_chuvas_rs_2016[["Indice", 'JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ']]
+
+media_de_chuvas_rs_2016
+
+media_de_chuvas_rs_2016 = media_de_chuvas_rs_2016.reset_index(drop=True)
+
+media_de_chuvas_rs_2016
+
+media_de_chuvas_rs_2016.drop(index=[4, 5, 6, 7], inplace=True)
+
+media_de_chuvas_rs_2016
+
+def move_ponto_esquerda(valor):
+    if isinstance(valor, float):
+        return valor / 10
+    else:
+        return valor
+
+media_de_chuvas_rs_2016.iloc[0:3, 1:] = media_de_chuvas_rs_2016.iloc[0:3, 1:].applymap(move_ponto_esquerda)
+
+media_de_chuvas_rs_2016.head()
+
+"""#2.1 Visualização da produção"""
+
