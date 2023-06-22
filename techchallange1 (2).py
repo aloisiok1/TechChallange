@@ -264,37 +264,8 @@ exportacao_total.head()
 
 exportacao_total = exportacao_total.set_index(exportacao_total.columns[0])
 
-index_column = exportacao_total.index.name
-print(index_column)
-
-import numpy as np
-
-def safe_division(x, y):
-    if y != 0:
-        return x / y
-    else:
-        return 0
-
-for year in range(2007, 2021):
-    index = ["Paises"]
-    valor1_col = f"{year} (Ltr)"
-    valor2_col = f"{year} Valor (USD)"
-    media_ = f'media_{year}'
-    exportacao_total.loc[:, valor1_col] = pd.to_numeric(exportacao_total[valor1_col], errors='coerce')
-    exportacao_total.loc[:, valor2_col] = pd.to_numeric(exportacao_total[valor2_col], errors='coerce')
-    exportacao_total.loc[:, media_] = exportacao_total.apply(lambda row: safe_division(row[valor2_col], row[valor1_col]), axis=1)
-
-# Reorganizando as colunas na ordem desejada
-columns_ordered = []
-for year in range(2007, 2021):
-    valor1_col = f"{year} (Ltr)"
-    valor2_col = f"{year} Valor (USD)"
-    media_ = f'media_{year}'
-    columns_ordered.extend([valor1_col, valor2_col, media_])
-
-exportacao_total = exportacao_total[columns_ordered]
-exportacao_total.fillna(0, inplace=True)
-
+total_index = exportacao_total.index.name
+print(total_index)
 
 exportacao_total.head()
 
@@ -803,5 +774,85 @@ media_de_chuvas_rs_2016.iloc[0:3, 1:] = media_de_chuvas_rs_2016.iloc[0:3, 1:].ap
 
 media_de_chuvas_rs_2016.head()
 
-"""#2.1 Visualização da produção"""
+"""#2.1 Visualização de Dados de Exportação"""
+
+exportacao_total.head()
+
+import pandas as pd
+
+colunas_desejadas = ['2007 Valor (USD)', '2008 Valor (USD)', '2009 Valor (USD)', "2010 Valor (USD)", "2011 Valor (USD)", "2012 Valor (USD)", "2013 Valor (USD)", "2014 Valor (USD)",
+                     "2015 Valor (USD)", "2016 Valor (USD)", "2017 Valor (USD)", "2018 Valor (USD)", "2019 Valor (USD)", "2020 Valor (USD)", "2021 Valor (USD)"]
+
+total_usd_paises = exportacao_total.loc[:, colunas_desejadas].copy()
+total_usd_paises = pd.DataFrame(total_usd_paises)
+
+total_usd_paises.head()
+
+total_usd_paises[colunas_desejadas] = total_usd_paises[colunas_desejadas].apply(pd.to_numeric, errors='coerce')
+
+total_usd_paises["Total"] = total_usd_paises[colunas_desejadas].sum(axis=1)
+
+total_usd_paises.head()
+
+import matplotlib.pyplot as plt
+
+total_usd_paises_sorted = total_usd_paises.sort_values(by="Total", ascending=False)
+
+total_usd_paises_sorted[("Total")].T.plot(kind="bar", figsize=(18,4))
+plt.xlabel("Países")
+plt.ylabel("Valor (USD)")
+plt.title("Gráfico de Investimentos por País em 2021")
+plt.show()
+
+top_10_valores = total_usd_paises_sorted["Total"].nlargest(10)
+
+top_10_valores.rename(index={"Alemanha, RepÃºblica DemocrÃ¡tica": "Alemanha", "PaÃ­ses Baixos": "Holanda", "JapÃ£o": "Japão", "BÃ©lgica": "Belgica",}, inplace=True)
+top_10_valores
+
+"""#2.1.1 >>> Os 10 Maiores Importadores de Vinho Brasileiro nos ultimos 15 Anos (USD)"""
+
+top_10_valores.plot(kind="bar", figsize=(8, 4))
+plt.xlabel("Países")
+plt.ylabel("Valor Total (USD)")
+plt.title("Os 10 Maiores Importadores de Vinho Brasileiro nos ultimos 15 Anos (USD)")
+plt.show()
+
+"""#construção para o maior volume em litros"""
+
+colunas_exp_litros = ['2007 (Ltr)', '2008 (Ltr)', '2009 (Ltr)', "2010 (Ltr)", "2011 (Ltr)", "2012 (Ltr)", "2013 (Ltr)", "2014 (Ltr)",
+                     "2015 (Ltr)", "2016 (Ltr)", "2017 (Ltr)", "2018 (Ltr)", "2019 (Ltr)", "2020 (Ltr)", "2021 (Ltr)"]
+
+total_exp_paises_ltr = exportacao_total.loc[:, colunas_exp_litros].copy()
+total_exp_paises_ltr = pd.DataFrame(total_exp_paises_ltr)
+
+total_exp_paises_ltr.head()
+
+total_exp_paises_ltr[colunas_exp_litros] = total_exp_paises_ltr[colunas_exp_litros].apply(pd.to_numeric, errors='coerce')
+
+total_exp_paises_ltr["Total"] = total_exp_paises_ltr[colunas_exp_litros].sum(axis=1)
+total_exp_paises_ltr.head()
+
+total_exp_paises_ltr = total_exp_paises_ltr.sort_values(by="Total", ascending=False)
+total_exp_paises_ltr.head()
+
+total_exp_paises_ltr10 = total_exp_paises_ltr["Total"].nlargest(10)
+total_exp_paises_ltr10
+
+total_exp_paises_ltr10.rename(index={"ItÃ¡lia": "Italia", "Nova ZelÃ¢ndia": "Nova Zelandia"}, inplace=True)
+total_exp_paises_ltr10
+
+"""# 2.1.2 >>> Os 10 maiores importadores de Vinhos Brasileiros em Volume (Lts)"""
+
+total_exp_paises_ltr10.plot(kind="bar", figsize=(8, 4))
+plt.xlabel("Países")
+plt.ylabel("Volume (Lts)")
+plt.title("Os 10 Maiores Importadores de Vinho Brasileiros em Volume (Litros)")
+plt.show()
+
+"""Unir e criar um preço medio por litro."""
+
+preço_medio = pd.concat([total_exp_paises_ltr10, top_10_valores])
+
+preço_medio = preço_medio.reset_index(drop=True)
+preço_medio
 
