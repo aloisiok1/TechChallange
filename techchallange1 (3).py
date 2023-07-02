@@ -8,6 +8,8 @@ Original file is located at
 """
 
 import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 """## 1 Extração dos dados
 
@@ -135,7 +137,7 @@ producao_total = producao_total.set_index(producao_total.columns[0])
 index_column = producao_total.index.name
 print(index_column)
 
-producao_total.to_excel('producao_total.xlsx', index=False)
+producao_total.to_excel('producao_total.xlsx', index=True)
 
 """# 1.2 exportação de Vinho de 2007 até 2021"""
 
@@ -774,85 +776,592 @@ media_de_chuvas_rs_2016.iloc[0:3, 1:] = media_de_chuvas_rs_2016.iloc[0:3, 1:].ap
 
 media_de_chuvas_rs_2016.head()
 
-"""#2.1 Visualização de Dados de Exportação"""
+precipitacao_media_rs_2016 = media_de_chuvas_rs_2016.iloc[3]
+precipitacao_media_rs_2016
 
-exportacao_total.head()
+precipitacao_media_rs = media_de_chuvas_rs.iloc[3]
+precipitacao_media_rs
 
-import pandas as pd
+comparacao_media_rs = pd.DataFrame({'Mês': ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+                                    'Média RS (mm)': [120.7, 110.80, 103.3, 114.4, 112.8, 130.4, 163.5, 120.1, 147.8, 153.2, 105.5, 112.10],
+                                    'Média RS 2016 (mm)': [115.0, 146.0, 243.0, 260.0, 60.0, 7.0, 192.0, 111.0, 84.0, 373.0, 104.0, 81.0]})
 
-colunas_desejadas = ['2007 Valor (USD)', '2008 Valor (USD)', '2009 Valor (USD)', "2010 Valor (USD)", "2011 Valor (USD)", "2012 Valor (USD)", "2013 Valor (USD)", "2014 Valor (USD)",
-                     "2015 Valor (USD)", "2016 Valor (USD)", "2017 Valor (USD)", "2018 Valor (USD)", "2019 Valor (USD)", "2020 Valor (USD)", "2021 Valor (USD)"]
+comparacao_media_rs
 
-total_usd_paises = exportacao_total.loc[:, colunas_desejadas].copy()
-total_usd_paises = pd.DataFrame(total_usd_paises)
+comparacao_media_rs = comparacao_media_rs.reset_index()
+comparacao_media_rs = comparacao_media_rs.set_index(comparacao_media_rs.columns[1])
+comparacao_media_rs = comparacao_media_rs.drop("index", axis=1)
+print(comparacao_media_rs)
 
-total_usd_paises.head()
+comparacao_media_rs.plot(figsize=(12, 4), kind = "line")
+plt.xlabel('Meses')
+plt.ylabel('Quantidade (Milimetros)')
+plt.title('Comparação de Média de chuvas no Rio Grande Do Sul')
+plt.xticks(rotation=45)
+plt.grid(linestyle='dotted')
+plt.show()
 
-total_usd_paises[colunas_desejadas] = total_usd_paises[colunas_desejadas].apply(pd.to_numeric, errors='coerce')
+comparacao_italia = pd.DataFrame({'Mês': ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+                                   'Média RS (mm)': [120.7, 110.80, 103.3, 114.4, 112.8, 130.4, 163.5, 120.1, 147.8, 153.2, 105.5, 112.10],
+                                   'Média Sicilia (mm)': [67.1, 63.6, 49.5, 38.2, 21.5, 9.6, 3.7, 10.2, 41.8, 66.6, 71.6, 71.9]
+})
+comparacao_italia
 
-total_usd_paises["Total"] = total_usd_paises[colunas_desejadas].sum(axis=1)
+comparacao_italia = comparacao_italia.reset_index()
+comparacao_italia = comparacao_italia.set_index(comparacao_italia.columns[1])
+comparacao_italia = comparacao_italia.drop("index", axis=1)
+print(comparacao_italia)
 
-total_usd_paises.head()
+comparacao_italia.plot(figsize=(12, 6), kind = "line")
+plt.xlabel('Meses')
+plt.ylabel('Quantidade (Milimetros)')
+plt.title('Comparação de Média de chuvas Brasil X Itália')
+plt.xticks(rotation=45)
+plt.grid(linestyle='dotted')
+plt.show()
+
+comparacao_clima_italia = pd.DataFrame({'Mês': ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+                                   'Média RS (C°)': [27, 26, 25, 22, 18, 10, 7, 8, 10, 19, 22, 25],
+                                   'Média Recife (C°)': [28, 29, 29, 28, 27, 26, 25, 26, 27, 27, 28, 28 ],
+                                   'Média Sicilia (C°)': [15, 15, 16, 19, 22, 26, 29, 29, 27, 24, 20, 16]
+})
+comparacao_clima_italia
+
+comparacao_clima_italia = comparacao_clima_italia.reset_index()
+comparacao_clima_italia = comparacao_clima_italia.set_index(comparacao_clima_italia.columns[1])
+comparacao_clima_italia = comparacao_clima_italia.drop("index", axis=1)
+print(comparacao_clima_italia)
+
+comparacao_clima_italia.plot(figsize=(12, 6), kind = "line")
+plt.xlabel('Meses')
+plt.ylabel('Quantidade (Milimetros)')
+plt.title('Comparação de Média de Temperatura Brasil X Itália')
+plt.xticks(rotation=45)
+plt.grid(linestyle='dotted')
+plt.show()
+
+"""#2.1 Visualização de Dados de Exportação
+
+# 2.1.2 >>> O total das exportações nos ultimos 15 (em Litros) anos em uma série temporal
+"""
+
+ver4=exportacao_total.copy()
+ver4
+
+ver4 = ver4.drop(['2007 Valor (USD)', '2008 Valor (USD)', '2009 Valor (USD)', "2010 Valor (USD)", "2011 Valor (USD)", "2012 Valor (USD)", "2013 Valor (USD)",
+                               "2014 Valor (USD)", "2015 Valor (USD)", "2016 Valor (USD)", "2017 Valor (USD)", "2018 Valor (USD)", "2019 Valor (USD)", "2020 Valor (USD)",
+                               "2021 Valor (USD)"], axis=1)
+
+print(ver4)
+
+ver4 = ver4.iloc[-1]
+print(ver4)
+
+ver4 = pd.DataFrame(ver4)
+
+ver4
 
 import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
 
-total_usd_paises_sorted = total_usd_paises.sort_values(by="Total", ascending=False)
+ver4['Total'] = ver4['Total'].str.replace('.', '').str.replace(',', '.')
 
-total_usd_paises_sorted[("Total")].T.plot(kind="bar", figsize=(18,4))
-plt.xlabel("Países")
-plt.ylabel("Valor (USD)")
-plt.title("Gráfico de Investimentos por País em 2021")
+ver4['Total'] = ver4['Total'].astype(float)
+
+ver4.plot(figsize=(8, 4), kind = "bar", legend=None)
+plt.xlabel('Ano')
+plt.ylabel('Quantidade (Milhões de Lts)')
+plt.title('Exportação por Ano (Lts)')
+plt.xticks(rotation=45)
+plt.grid(linestyle='dotted')
+plt.show()
+#investigar quals foi o pais que mais impactou no volume de exportação récord no anos de 2009
+
+"""# 2.1.3 >>> Detalhes sobre 2009, ano com o maior volume."""
+
+ver5 = exportacao_total
+ver5
+
+ver5 = ver5[["2009 (Ltr)", "2009 Valor (USD)"]]
+ver5
+
+ver5 = pd.DataFrame(ver5)
+ver5
+
+ver5 = ver5.reset_index()
+
+ver5.columns = ['Paises', 'Litros', 'Valor']
+
+print(ver5)
+
+ver5['Litros'] = ver5['Litros'].str.replace('.', '', regex=False).astype(float)
+ver5['Valor'] = ver5['Valor'].str.replace('.', '', regex=False).astype(float)
+
+ver5["Litros"] = pd.to_numeric(ver5["Litros"])
+ver5["Valor"] = pd.to_numeric(ver5["Valor"])
+ver5
+
+ver5 = ver5.drop(ver5.index[-1])
+ver5
+
+ver5 = ver5.set_index("Paises")
+
+ver5 = ver5.sort_values(by='Litros', ascending=False)
+
+ver5 = ver5.nlargest(10, 'Litros')
+
+ver5 = ver5.rename(index={'RÃºssia': 'Rússia',
+                                    'China': 'China',
+                                    'Paraguai': 'Paraguai',
+                                    'Estados Unidos': 'Estados Unidos',
+                                    'Alemanha, RepÃºblica DemocrÃ¡tica': 'Alemanha',
+                                    'JapÃ£o': 'Japão',
+                                    'PaÃ­ses Baixos': 'Países Baixos',
+                                    'Portugal': 'Portugal',
+                                    'BÃ©lgica': 'Bélgica',
+                                    'Angola': 'Angola'})
+
+ver5
+
+ver5["Preço/Ltr"] = ver5 ["Valor"]/ver5["Litros"]
+ver5
+
+ver55 = ver5.copy()
+ver55
+
+ver55['Litros'] = ver55['Litros']/100000
+ver55['Valor'] = ver55['Valor']/100000
+ver55
+
+ver55['Preço/Ltr'] = ver55['Preço/Ltr']*10
+ver55
+
+ver55.plot(figsize=(12,8), kind="bar")
+plt.xlabel("Volume em Milhões de Lts")
+plt.ylabel("Paises")
+plt.title("Os 10 Maiores Importadores de 2009")
+plt.xticks(rotation=45)
+plt.grid(linestyle='dotted')
+plt.show()
+# O pais responsavel por 85% da exportação dos Vinhos Brasileiros
+
+"""# 2.1.4 >>> O total das Exportações nos ultimos 15 anos (em USD) em uma série temporal"""
+
+ver6 = exportacao_total
+ver6
+
+coluna_desejada = ['2007 Valor (USD)', '2008 Valor (USD)', '2009 Valor (USD)', "2010 Valor (USD)", "2011 Valor (USD)", "2012 Valor (USD)", "2013 Valor (USD)", "2014 Valor (USD)",
+                     "2015 Valor (USD)", "2016 Valor (USD)", "2017 Valor (USD)", "2018 Valor (USD)", "2019 Valor (USD)", "2020 Valor (USD)", "2021 Valor (USD)"]
+
+ver6 = exportacao_total.loc[:, coluna_desejada]
+ver6 = pd.DataFrame(ver6)
+
+ver6.tail()
+
+ver6 = ver6.rename(columns={'2007 Valor (USD)':'2007', '2008 Valor (USD)': '2008', '2009 Valor (USD)':'2009', "2010 Valor (USD)":'2010', "2011 Valor (USD)":'2011',
+                            "2012 Valor (USD)":'2012', "2013 Valor (USD)":'2013', "2014 Valor (USD)":'2014', "2015 Valor (USD)":'2015', "2016 Valor (USD)":'2016',
+                            "2017 Valor (USD)":'2017', "2018 Valor (USD)":'2018', "2019 Valor (USD)":'2019', "2020 Valor (USD)":'2020', "2021 Valor (USD)":'2021'})
+
+ver6 = ver6.iloc[-1]
+print(ver6)
+
+ver6 = ver6.reset_index()
+
+ver6.columns = ['Anos', 'Ltr']
+
+print(ver6)
+
+ver6['Ltr'] = ver6['Ltr'].str.replace('.', '', regex=False).astype(float)
+
+ver6["Ltr"] = pd.to_numeric(ver6["Ltr"])
+ver6
+
+ver6 = ver6.drop(ver6.index[0])
+ver6
+
+ver6 = ver6.set_index("Anos")
+
+ver6
+
+ver6.plot(figsize=(6, 4), kind = "bar", legend=None)
+plt.xlabel('Ano')
+plt.ylabel('Quantidade (Milhões de USD)')
+plt.title('Exportação por Ano (USD)')
+plt.xticks(rotation=45)
+plt.grid(linestyle='dotted')
 plt.show()
 
-top_10_valores = total_usd_paises_sorted["Total"].nlargest(10)
+"""# 2.1.5 >>>Detalhes sobre 2013, ano com maior volume"""
 
-top_10_valores.rename(index={"Alemanha, RepÃºblica DemocrÃ¡tica": "Alemanha", "PaÃ­ses Baixos": "Holanda", "JapÃ£o": "Japão", "BÃ©lgica": "Belgica",}, inplace=True)
-top_10_valores
+ver7 = exportacao_total
+ver7
 
-"""#2.1.1 >>> Os 10 Maiores Importadores de Vinho Brasileiro nos ultimos 15 Anos (USD)"""
+ver7 = ver7[["2013 Valor (USD)", "2013 (Ltr)"]]
+ver7
 
-top_10_valores.plot(kind="bar", figsize=(8, 4))
-plt.xlabel("Países")
-plt.ylabel("Valor Total (USD)")
-plt.title("Os 10 Maiores Importadores de Vinho Brasileiro nos ultimos 15 Anos (USD)")
+ver7 = pd.DataFrame(ver7)
+ver7
+
+ver7 = ver7.reset_index()
+
+ver7.columns = ['Países', 'USD', "Litros"]
+
+print(ver7)
+
+ver7['USD'] = ver7['USD'].str.replace('.', '', regex=False).astype(float)
+ver7['Litros'] = ver7['Litros'].str.replace('.', '', regex=False).astype(float)
+
+ver7["USD"] = pd.to_numeric(ver7["USD"])
+ver7["Litros"] = pd.to_numeric(ver7["Litros"])
+ver7
+
+ver7 = ver7.set_index("Países")
+
+ver7 = ver7.drop(ver7.index[-1])
+
+ver7 = ver7.sort_values(by='USD', ascending=False)
+
+ver7 = ver7.nlargest(10, 'USD')
+
+ver7
+
+ver7 = ver7.rename(index={'RÃºssia': 'Rússia',
+                                    'FinlÃ¢ndia': 'Finlândia', 'Estados Unidos': 'EUA',
+                                    'Alemanha, RepÃºblica DemocrÃ¡tica': 'Alemanha',
+                                    'JapÃ£o': 'Japão', 'PaÃ­ses Baixos': 'Países Baixos'})
+
+ver77 = ver7.copy()
+ver77
+
+ver77["Preço/Ltr"] = ver77 ["USD"]/ver77["Litros"]
+ver77
+
+ver77['USD'] = ver77['USD']/100000
+ver77['Litros'] = ver77['Litros']/100000
+ver77
+
+ver77.plot(figsize=(12, 6), kind = "bar", legend=None)
+plt.xlabel('Paises')
+plt.ylabel('Quantidade (Milhões de USD)')
+plt.title('Maiores Importadores de 2013 (USD)')
+plt.xticks(rotation=45)
+plt.grid(linestyle='dotted')
+plt.legend(["USD", "Litros", "Preço/Ltr"])
+plt.show()
+#A Rússia foi responsavel por 65% de todo o volume financeiro de exportações de vinhos BRasileiros de 2013.
+
+"""# 2.1.6 >>> Detalhes sobre o ultimo ano 2021"""
+
+ver8 = exportacao_total
+ver8
+
+ver8 = ver8[["2021 Valor (USD)", "2021 (Ltr)"]]
+ver8
+
+ver8 = pd.DataFrame(ver8)
+ver8
+
+ver8 = ver8.reset_index()
+
+ver8.columns = ['Países em 2021', 'USD', 'Ltr']
+
+print(ver8)
+
+ver8['USD'] = ver8['USD'].str.replace('.', '', regex=False).astype(float)
+ver8['Ltr'] = ver8['Ltr'].str.replace('.', '', regex=False).astype(float)
+
+ver8["USD"] = pd.to_numeric(ver8["USD"])
+ver8["Ltr"] = pd.to_numeric(ver8["Ltr"])
+ver8
+
+ver8 = ver8.dropna(subset=["USD", "Ltr"])
+ver8
+
+ver8 = ver8.set_index("Países em 2021")
+
+ver8 = ver8.drop(ver8.index[-1])
+
+ver8 = ver8.sort_values(by='USD', ascending=False)
+
+ver8 = ver8.nlargest(15, 'USD')
+ver8
+
+ver8 = ver8.rename(index={'RÃºssia': 'Rússia','NigÃ©ria': 'Nigéria', 'CuraÃ§ao': 'Curaçao', 'PanamÃ¡': 'Panamá', 'FinlÃ¢ndia': 'Finlândia',
+                          'JapÃ£o': 'Japão', 'Estados Unidos': 'EUA'})
+
+ver8.plot(figsize=(10, 8), kind = "bar", legend=None)
+plt.xlabel('Paises')
+plt.ylabel('Quantidade (bilhões de USD)')
+plt.title('Maiores Importadores de 2021 (USD)')
+plt.xticks(rotation=45)
+plt.grid(linestyle='dotted')
+plt.legend(["USD", "Ltr"])
 plt.show()
 
-"""#construção para o maior volume em litros"""
+"""# 2.1.6.1 Preço por Litro em 2021"""
 
-colunas_exp_litros = ['2007 (Ltr)', '2008 (Ltr)', '2009 (Ltr)', "2010 (Ltr)", "2011 (Ltr)", "2012 (Ltr)", "2013 (Ltr)", "2014 (Ltr)",
-                     "2015 (Ltr)", "2016 (Ltr)", "2017 (Ltr)", "2018 (Ltr)", "2019 (Ltr)", "2020 (Ltr)", "2021 (Ltr)"]
+ver9 = ver8.copy()
+ver9
 
-total_exp_paises_ltr = exportacao_total.loc[:, colunas_exp_litros].copy()
-total_exp_paises_ltr = pd.DataFrame(total_exp_paises_ltr)
+ver9["Preço/Ltr"] = ver9 ["USD"]/ver9["Ltr"]
+ver9
 
-total_exp_paises_ltr.head()
+ver9['USD'] = ver9['USD']/100000
+ver9['Ltr'] = ver9['Ltr']/100000
+ver9
 
-total_exp_paises_ltr[colunas_exp_litros] = total_exp_paises_ltr[colunas_exp_litros].apply(pd.to_numeric, errors='coerce')
-
-total_exp_paises_ltr["Total"] = total_exp_paises_ltr[colunas_exp_litros].sum(axis=1)
-total_exp_paises_ltr.head()
-
-total_exp_paises_ltr = total_exp_paises_ltr.sort_values(by="Total", ascending=False)
-total_exp_paises_ltr.head()
-
-total_exp_paises_ltr10 = total_exp_paises_ltr["Total"].nlargest(10)
-total_exp_paises_ltr10
-
-total_exp_paises_ltr10.rename(index={"ItÃ¡lia": "Italia", "Nova ZelÃ¢ndia": "Nova Zelandia"}, inplace=True)
-total_exp_paises_ltr10
-
-"""# 2.1.2 >>> Os 10 maiores importadores de Vinhos Brasileiros em Volume (Lts)"""
-
-total_exp_paises_ltr10.plot(kind="bar", figsize=(8, 4))
-plt.xlabel("Países")
-plt.ylabel("Volume (Lts)")
-plt.title("Os 10 Maiores Importadores de Vinho Brasileiros em Volume (Litros)")
+ver9.plot(figsize=(8, 8), kind = "bar", legend=None)
+plt.xlabel('Paises')
+plt.ylabel('Quantidade (bilhões de USD)')
+plt.title('Maiores Importadores de 2021 (USD)')
+plt.xticks(rotation=45)
+plt.grid(linestyle='dotted')
+plt.legend(["USD", "Ltr", "Preço/Ltr"])
 plt.show()
 
-"""Unir e criar um preço medio por litro."""
+"""#2.1.1 Dados geral de exportação nos ultimos 15 anos por País (USD)"""
 
-preço_medio = pd.concat([total_exp_paises_ltr10, top_10_valores])
+ver10 = exportacao_total.copy()
+ver10
 
-preço_medio = preço_medio.reset_index(drop=True)
-preço_medio
+colunas_USD = ['2007 Valor (USD)', '2008 Valor (USD)', '2009 Valor (USD)', "2010 Valor (USD)", "2011 Valor (USD)", "2012 Valor (USD)", "2013 Valor (USD)", "2014 Valor (USD)",
+                     "2015 Valor (USD)", "2016 Valor (USD)", "2017 Valor (USD)", "2018 Valor (USD)", "2019 Valor (USD)", "2020 Valor (USD)", "2021 Valor (USD)"]
 
+ver10 = exportacao_total.loc[:, colunas_USD]
+ver10 = pd.DataFrame(ver10)
+
+ver10
+
+ver10 = ver10.reset_index()
+ver10 = ver10.set_index(ver10.columns[0])
+print(ver10)
+
+ver10
+
+columns = ['2007 Valor (USD)', '2008 Valor (USD)', '2009 Valor (USD)', '2010 Valor (USD)', '2011 Valor (USD)', '2012 Valor (USD)', '2013 Valor (USD)', '2014 Valor (USD)',
+           '2015 Valor (USD)', '2016 Valor (USD)', '2017 Valor (USD)', '2018 Valor (USD)', '2019 Valor (USD)', '2020 Valor (USD)', '2021 Valor (USD)']
+
+for col in columns:
+    ver10[col] = ver10[col].str.replace('.', '', regex=False).astype(float)
+
+ver10
+
+ver10 = ver10.fillna(0)
+ver10
+
+col = ['2007 Valor (USD)', '2008 Valor (USD)', '2009 Valor (USD)', "2010 Valor (USD)", "2011 Valor (USD)", "2012 Valor (USD)", "2013 Valor (USD)", "2014 Valor (USD)",
+                     "2015 Valor (USD)", "2016 Valor (USD)", "2017 Valor (USD)", "2018 Valor (USD)", "2019 Valor (USD)", "2020 Valor (USD)", "2021 Valor (USD)"]
+ver10["Total"] = ver10[col].sum(axis=1)
+ver10
+
+ver10 = ver10.drop(ver10.index[-1])
+
+ver10 = ver10.sort_values(by='Total', ascending=False)
+
+ver10 = ver10.nlargest(15, 'Total')
+ver10
+
+"""# 2.1.1.1 >>> os 15 maiores no total dos 15 anos"""
+
+ver11 = ver10.copy()
+ver11
+
+ver11 = ver11['Total']
+ver11
+
+ver11 = ver11.rename(index={'RÃºssia': 'Rússia', 'JapÃ£o': 'Japão', 'Estados Unidos': 'EUA', 'PaÃ­ses Baixos': 'Países Baixos', 'Alemanha, RepÃºblica DemocrÃ¡tica': 'Alemanha',
+                            'BÃ©lgica': 'Bélgica', 'CanadÃ¡': 'Canadá', 'SuÃ­Ã§a': 'Sudão', 'FranÃ§a': 'França'})
+
+ver11.plot(figsize=(12, 6), kind = "bar", legend=None)
+plt.xlabel('Paises')
+plt.ylabel('Quantidade (bilhões de USD)')
+plt.title('Maiores Importadores nos ultimos 15 anos')
+plt.xticks(rotation=45)
+plt.grid(linestyle='dotted')
+plt.legend(["USD", "Ltr"])
+plt.show()
+
+"""# 2.1.1.2 >>> O histórico dos 15 maiores no total dos 15 anos"""
+
+ver12 = ver10.copy()
+ver12
+
+ver12 = pd.DataFrame(ver12)
+
+ver12 = ver12.rename(index={'RÃºssia': 'Rússia', 'JapÃ£o': 'Japão', 'Estados Unidos': 'EUA', 'PaÃ­ses Baixos': 'Países Baixos', 'Alemanha, RepÃºblica DemocrÃ¡tica': 'Alemanha',
+                            'BÃ©lgica': 'Bélgica', 'CanadÃ¡': 'Canadá', 'SuÃ­Ã§a': 'Sudão', 'FranÃ§a': 'França'})
+
+ver12
+
+ver12 = ver12.loc[['Paraguai', 'Rússia', 'EUA', 'Reino Unido', 'China', 'Países Baixos', 'Espanha', 'Alemanha', 'Japão', 'Haiti']]
+ver12
+
+ver12 = ver12.drop('Total', axis=1)
+
+ver12
+
+ver12 = ver12.rename(columns={'2007 Valor (USD)': '2007', '2008 Valor (USD)': '2008','2009 Valor (USD)': '2009', '2010 Valor (USD)': '2010', '2011 Valor (USD)': '2011',
+                              '2012 Valor (USD)': '2012', '2013 Valor (USD)': '2013', '2014 Valor (USD)': '2014', '2015 Valor (USD)': '2015', '2016 Valor (USD)': '2016',
+                              '2017 Valor (USD)': '2017', '2018 Valor (USD)': '2018', '2019 Valor (USD)': '2019', '2020 Valor (USD)': '2020', '2021 Valor (USD)': '2021'})
+
+ver12.T.plot(figsize=(12, 8), kind = "line", legend=None)
+plt.xlabel('Paises')
+plt.ylabel('Quantidade (bilhões de USD)')
+plt.title('Maiores Importadores nos ultimos 15 anos (USD)')
+plt.xticks(rotation=45)
+plt.grid(linestyle='dotted')
+plt.legend()
+plt.show()
+
+"""# 3.1 >>> Produção de uvas"""
+
+ver13 = producao_total.copy()
+ver13.head()
+
+ver13 = pd.DataFrame(ver13)
+ver13.head()
+
+ver13 = ver13.replace("-", 0)
+ver13.head()
+
+ver13 = ver13.reset_index()
+ver13 = ver13.set_index(ver13.columns[0])
+print(ver13.head())
+
+ver13.head()
+
+columns = ['2007', '2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021']
+
+for col in columns:
+    ver13[col] = ver13[col].str.replace('.', '', regex=False).astype(float)
+ver13.head()
+
+ver13 = ver13.fillna(0)
+ver13.head()
+
+ver14 = ver13.loc[['VINHO DE MESA', 'VINHO FINO DE MESA (VINÃFERA)', 'SUCO', 'DERIVADOS', 'Total']]
+ver14
+
+ver14 = ver14.rename(index={'VINHO FINO DE MESA (VINÃFERA)': 'Vinho Fino'})
+
+ver14 = ver14.transpose().plot(kind='line', figsize=(10, 6))
+ver14.set_yticklabels(['{:.0f} M'.format(x/1e6) for x in ver14.get_yticks()])
+plt.ylabel('Volume em Litros (em milhões)')
+plt.xlabel('Ano')
+plt.title('Produção de Uva por ano')
+plt.ylim(0, 600_000_000)
+plt.yticks([0, 100_000_000, 200_000_000, 300_000_000, 400_000_000, 500_000_000, 600_000_000], ['0 M', '100 M', '200 M', '300 M', '400 M', '500 M', '600 M'])
+plt.show()
+
+ver14
+
+"""# 3.2 Os maiores produtosres do mundo de uvas"""
+
+maiores_produtores_mundo = pd.read_html("https://pt.wikipedia.org/wiki/Uva")
+maiores_produtores_mundo = maiores_produtores_mundo[4]
+maiores_produtores_mundo.head()
+
+maiores_produtores_mundo = pd.DataFrame(maiores_produtores_mundo)
+maiores_produtores_mundo
+
+maiores_produtores_mundo = maiores_produtores_mundo.reset_index()
+maiores_produtores_mundo = maiores_produtores_mundo.set_index(maiores_produtores_mundo.columns[1])
+maiores_produtores_mundo
+
+maiores_produtores_mundo = maiores_produtores_mundo.drop("index", axis=1)
+
+maiores_produtores_mundo = maiores_produtores_mundo.drop(maiores_produtores_mundo.index[-1])
+
+maiores_produtores_mundo
+
+maiores_produtores_mundo["Produção em 2017 (milhões de toneladas anuais)"] = maiores_produtores_mundo["Produção em 2017 (milhões de toneladas anuais)"].str.replace('.', '', regex=False).astype(float)
+
+maiores_produtores_mundo
+
+maiores_produtores_mundo = maiores_produtores_mundo.drop(maiores_produtores_mundo.index[-1])
+
+maiores_produtores_mundo.plot(figsize=(12, 8), kind = "bar", legend=None)
+plt.xlabel('Paises')
+plt.ylabel('Milhões de Toneladas Anuais')
+plt.title('Maiores Produtores de Uvas do Mundo')
+plt.xticks(rotation=45)
+plt.grid(linestyle='dotted')
+plt.legend()
+plt.show()
+
+comparado_territorio = maiores_produtores_mundo.copy()
+comparado_territorio
+
+tamanho_territorio = {'China': 9.596, 'Itália': 0.301, 'Estados Unidos':9.834, 'França':0.551, 'Espanha':0.505, 'Turquia':0.783, 'Índia':3.287, 'África do Sul' : 1.219, 'Chile': 0.756,
+                      'Argentina': 0.756, "Brasil":8.515, "Irão": 1.648, 'Austrália': 7.692, 'Egito': 1.002, 'Uzbequistão': 0.448, 'Roménia':0.238, 'Alemanha': 0.357, 'Grécia': 0.131,
+                      'Afeganistão': 0.652, 'Portugal': 0.092}
+
+comparado_territorio['Tamanho do Território (Mil Km²)'] = comparado_territorio.index.map(tamanho_territorio)
+comparado_territorio
+
+comparado_territorio['Tamanho do Território (Mil Km²)'] = comparado_territorio['Tamanho do Território (Mil Km²)']*10
+comparado_territorio
+
+correcoes = {'Irão': 'Irã', 'Roménia':'Romênia'}
+comparado_territorio.rename(index=correcoes, inplace = True)
+
+comparado_territorio.plot(figsize=(12, 8), kind = "bar", legend=None)
+plt.xlabel('Paises')
+plt.ylabel('Milhões de Toneladas Anuais')
+plt.title('Maiores Produtores de Uvas do Mundo')
+plt.xticks(rotation=45)
+plt.grid(linestyle='dotted')
+plt.legend()
+plt.show()
+
+consumo_percapito = {
+    "Países" :['Portugal', 'França', 'Itália', 'Suiça', 'Austria', 'Australia', 'Alemanha', 'Espanha', 'Holanda', 'Bélgica', 'Rep. Checa', 'Suécia', 'Romenia', 'Argentina', 'Grécia', 'Reino Unido', 'Canadá', 'EUA', 'Afr. do Sul', 'Rússia', 'Japão', 'Brasil', 'China'],
+    "Consumo Per Capito (Ltr)" :[51.9, 46.9, 46.0, 35.3, 30.6, 28.7, 27.5, 26.2, 26.1, 26.0, 25.6, 25.5, 24.6, 24.5, 24.5, 24.0, 13.3, 12.2, 9.5, 8.8, 3.0, 2.4, 0.9]
+}
+
+comparacao_territorio_consumo = pd.DataFrame(consumo_percapito)
+comparacao_territorio_consumo
+
+comparacao_territorio_consumo = comparacao_territorio_consumo.reset_index()
+comparacao_territorio_consumo = comparacao_territorio_consumo.set_index(comparacao_territorio_consumo.columns[1])
+comparacao_territorio_consumo = comparacao_territorio_consumo.drop("index", axis=1)
+print(comparacao_territorio_consumo)
+
+comparacao_territorio_consumo.plot(figsize=(8, 4), kind = "bar", legend=None)
+plt.xlabel('Paises')
+plt.ylabel('(Litros) Per capita')
+plt.title('Maiores consumidoresde vinhos do Mundo')
+plt.xticks(rotation=45)
+plt.grid(linestyle='dotted')
+plt.legend()
+plt.show()
+
+"""# 3.3 >>>>Produção por estados Brasileiros"""
+
+dados = {
+    "Estado": ["RS", "PE", "SP", "SC", "BA", "PR", "MG", "ES", "PB", "DF", "GO", "MT", "CE", "RJ", "PI", "RO", "MS", "RN", "TO"],
+    'Produção 2017 (Ton)': [956887, 621170, 133261, 65196, 56504, 53345, 13685, 3468, 2620, 1700, 1650, 1002, 708, 302, 240, 187, 78, 30, 1]
+}
+
+producao_brasil_estados = pd.DataFrame(dados)
+producao_brasil_estados
+
+producao_brasil_estados = producao_brasil_estados.reset_index()
+producao_brasil_estados = producao_brasil_estados.set_index(producao_brasil_estados.columns[1])
+producao_brasil_estados = producao_brasil_estados.drop("index", axis=1)
+print(producao_brasil_estados)
+
+producao_brasil_estados['Produção 2017 (Ton)'] = producao_brasil_estados['Produção 2017 (Ton)']/1000
+producao_brasil_estados
+
+producao_brasil_estados = producao_brasil_estados.nlargest(5, 'Produção 2017 (Ton)')
+producao_brasil_estados
+
+producao_brasil_estados.plot(figsize=(8, 4), kind = "bar", legend=None)
+plt.xlabel('Estados')
+plt.ylabel('Milhões de Toneladas Anuais')
+plt.title('O 5 Estados Maiores Produtores de Uvas do Brasil')
+plt.xticks(rotation=0)
+plt.grid(linestyle='dotted')
+plt.legend()
+plt.show()
